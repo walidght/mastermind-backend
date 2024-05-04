@@ -1,3 +1,4 @@
+import sys
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 from game import colors_to_index_string, colors_to_string, generate_code, generate_feedback
@@ -8,7 +9,11 @@ from ai_expert import play_level_expert
 
 
 app = Flask(__name__, static_url_path='', static_folder='static')
-CORS(app)
+
+# Parse command-line arguments
+if '--env=development' in sys.argv:
+    # Enable CORS only during development
+    CORS(app)
 
 
 @app.route('/')
