@@ -29,11 +29,7 @@ def generate_code():
 def keep_possible(game, possible_answers=None):
     if possible_answers is None:
         possible_answers = list(itertools.product("123456", repeat=4))
-    for turn in game:
-        for possible in possible_answers:
-            if generate_feedback(turn['guess'], possible) != turn['score']:
-                possible_answers.remove(possible)
-
+    possible_answers = [possible for possible in possible_answers if all(generate_feedback(turn['guess'], possible) == turn['score'] for turn in game)]
     return possible_answers
 
 
