@@ -8,6 +8,7 @@ from player import play
 from ai_easy import play_level_easy
 from ai_normal import play_level_normal
 from ai_expert import play_level_expert
+from ai_knuth import play_level_knuth
 
 
 app = Flask(__name__, static_url_path='', static_folder='static')
@@ -89,6 +90,9 @@ def ai():
             return jsonify({'guesses': guesses, 'feedbacks': feedbacks})
         elif (level == "expert"):
             guesses, feedbacks = play_level_expert(code)
+            return jsonify({'guesses': guesses, 'feedbacks': feedbacks})
+        elif (level == "knuth"):
+            guesses, feedbacks = play_level_knuth(code)
             return jsonify({'guesses': guesses, 'feedbacks': feedbacks})
         else:
             return ''

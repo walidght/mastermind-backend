@@ -93,7 +93,7 @@ class mastermind:
 mm = mastermind()
 
 
-def play_level_expert(answer):
+def play_level_knuth(answer):
     game = mm.play(answer)
 
     guesses = []
