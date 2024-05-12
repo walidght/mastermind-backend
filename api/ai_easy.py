@@ -10,7 +10,7 @@ def play_turn(game, possible_answers):
     return random.choice(possible_answers)
 
 
-def play_level_expert(answer):
+def play_level_easy(answer):
 
     possible_answers = list(itertools.product("123456", repeat=4))
 
@@ -18,6 +18,13 @@ def play_level_expert(answer):
 
     while True:
         guess = play_turn(game, possible_answers)
+        # mutation
+        if random.random() <= 0.17:
+            change_index = random.randint(0, 3)
+            change_value = random.randint(1, 6)
+            guess = list(guess)
+            guess[change_index] = str(change_value)
+            guess = tuple(guess)
         score = generate_feedback(guess, answer)
         game.append({'guess': guess, 'score': score})
         if score == (4, 0):

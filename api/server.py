@@ -4,6 +4,8 @@ from flask_cors import CORS
 from game import colors_to_index_string, colors_to_string, generate_code, generate_feedback
 from hint import generate_hints
 from game import keep_possible
+from player import play
+from ai_easy import play_level_easy
 from ai_normal import play_level_normal
 from ai_expert import play_level_expert
 
@@ -35,8 +37,16 @@ def guess():
         answer = data['answer']
         guess = data['guess']
         black, white = generate_feedback(guess, answer)
+        #######################################
+        # je te laisse le code pour la partie #
+        # où on calcul le nombre de coup max  #
+        #######################################
+        # max_remaining = play(guess, (black, white))
         feedback = {"colors": ['black'] * black + ['white']
                     * white, "won": True if black == 4 else False}
+        # feedback = {"colors": ['black'] * black + ['white'] * white, 
+        #             "won": True if black == 4 else False,
+        #             "max_remaining": max_remaining}
         print("@post /guess", data)
         print("return: ", feedback)
         return jsonify(feedback)
@@ -71,10 +81,13 @@ def ai():
         code = data['code']
         code = tuple(colors_to_index_string(code))
 
-        if (level == "normal"):
+        if (level == "easy"):
+            guesses, feedbacks = play_level_easy(code)
+            return jsonify({'guesses': guesses, 'feedbacks': feedbacks})
+        elif (level == "normal"):
             guesses, feedbacks = play_level_normal(code)
             return jsonify({'guesses': guesses, 'feedbacks': feedbacks})
-        if (level == "expert"):
+        elif (level == "expert"):
             guesses, feedbacks = play_level_expert(code)
             return jsonify({'guesses': guesses, 'feedbacks': feedbacks})
         else:
