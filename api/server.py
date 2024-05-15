@@ -1,4 +1,4 @@
-import sys
+import os
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 from game import colors_to_index_string, colors_to_string, generate_code, generate_feedback
@@ -9,12 +9,14 @@ from ai_easy import play_level_easy
 from ai_normal import play_level_normal
 from ai_expert import play_level_expert
 from ai_knuth import play_level_knuth
+from dotenv import load_dotenv
 
 
 app = Flask(__name__, static_url_path='', static_folder='static')
 
-# Parse command-line arguments
-if '--env=development' in sys.argv:
+load_dotenv()
+
+if os.environ.get('ENV') == "development":
     # Enable CORS only during development
     CORS(app)
 
@@ -45,7 +47,7 @@ def guess():
         # max_remaining = play(guess, (black, white))
         feedback = {"colors": ['black'] * black + ['white']
                     * white, "won": True if black == 4 else False}
-        # feedback = {"colors": ['black'] * black + ['white'] * white, 
+        # feedback = {"colors": ['black'] * black + ['white'] * white,
         #             "won": True if black == 4 else False,
         #             "max_remaining": max_remaining}
         print("@post /guess", data)

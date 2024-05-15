@@ -54,28 +54,28 @@ def get_hints_in_nl(born_inf, born_sup, possibles_per_position):
     hints = []
     for i, (born_i, born_s) in enumerate(zip(born_inf, born_sup)):
         if born_i == born_s and born_s != 0:
-            hints.append(f"there is exactly {born_i} {COLORS[i]}")
+            hints.append(f"2there is exactly {born_i} {COLORS[i]}")
             continue
         if born_i > 0:
-            hints.append(f"there is at least {born_i} {COLORS[i]}")
+            hints.append(f"6there is at least {born_i} {COLORS[i]}")
         if born_s == 0:
-            hints.append(f"there is no {COLORS[i]}")
+            hints.append(f"5there is no {COLORS[i]}")
         elif born_s < 4:
-            hints.append(f"there is at most {born_s} {COLORS[i]}")
+            hints.append(f"7there is at most {born_s} {COLORS[i]}")
     for position in range(4):
         if len(possibles_per_position[position]) == 6:
             continue
         elif len(possibles_per_position[position]) == 1:
             hints.append(
-                f"position {position + 1} is {COLORS[possibles_per_position[position].pop()]}")
+                f"1position {position + 1} is {COLORS[possibles_per_position[position].pop()]}")
         elif len(possibles_per_position[position]) > 3:
             hints.append(
-                f"position {position + 1} is not {', '.join([COLORS[color] for color in get_complementary(possibles_per_position[position])])}")
+                f"4position {position + 1} is not {', '.join([COLORS[color] for color in get_complementary(possibles_per_position[position])])}")
         else:
             hints.append(
-                f"position {position + 1} can be {', '.join([COLORS[color] for color in possibles_per_position[position]])}")
-
-    return hints
+                f"3position {position + 1} can be {', '.join([COLORS[color] for color in possibles_per_position[position]])}")
+            
+    return [hint[1:] for hint in sorted(hints)]
 
 
 def print_hints(born_inf, born_sup, possibles_per_position):
