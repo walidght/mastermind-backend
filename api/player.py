@@ -195,6 +195,4 @@ def calcul_max_guess_remaining(h, knuthTree):
             
     return maxh
 
-player = player_Mastermind()
-
 
