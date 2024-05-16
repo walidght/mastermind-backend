@@ -5,12 +5,21 @@ class player_Mastermind():
 
     def __init__(self):
         self.codes = list(itertools.product('123456', repeat=4))
-        self.codes_possibles = list(itertools.product('123456', repeat=4))
+        self.codes_valides = list(itertools.product('123456', repeat=4))
         self.alpha = {(0, 4) : 0, (0, 3) : 1, (0, 2) : 2, (0, 1) : 3, (0, 0) : 4,
                       (1, 3) : 5, (1, 2) : 6, (1, 1) : 7, (1, 0) : 8,
                       (2, 2) : 9, (2, 1) : 10, (2, 0) : 11,
                       (3, 1) : 12, (3, 0) : 13,
                       (4, 0) : 14}
+        
+    def get_stats(self, guesses, evals, nb_coup):
+        for i in range(nb_coup):
+            guess, eval = guesses[i], evals[i]
+            _, list_candidates = calcul_candidate(player.codes_valides, guess)
+            player.codes_valides = list_candidates[player.alpha[eval]]
+        _, _, _, knuthTree = knuth_all(player.codes, player.codes_valides, list(guess))
+        max_remaining = calcul_max_guess_remaining(1, knuthTree)
+        return max_remaining, len(self.codes_valides)
 
 def knuth_all(codes, candidates, guess):
     nb_candidates, list_candidates = calcul_candidate(candidates, guess)
@@ -188,9 +197,4 @@ def calcul_max_guess_remaining(h, knuthTree):
 
 player = player_Mastermind()
 
-def play(guess, eval):
-    _, list_candidates = calcul_candidate(player.codes_possibles, guess)
-    player.codes_possibles = list_candidates[player.alpha[eval]]
-    _, _, _, knuthTree = knuth_all(player.codes, player.codes_possibles, list(guess))
-    max_remaining = calcul_max_guess_remaining(0, knuthTree)
-    return max_remaining
+
