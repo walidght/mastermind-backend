@@ -15,9 +15,9 @@ class player_Mastermind():
     def get_stats(self, guesses, evals, nb_coup):
         for i in range(nb_coup):
             guess, eval = guesses[i], evals[i]
-            _, list_candidates = calcul_candidate(player.codes_valides, guess)
-            player.codes_valides = list_candidates[player.alpha[eval]]
-        _, _, _, knuthTree = knuth_all(player.codes, player.codes_valides, list(guess))
+            _, list_candidates = calcul_candidate(self.codes_valides, guess)
+            self.codes_valides = list_candidates[self.alpha[eval]]
+        _, _, _, knuthTree = knuth_all(self.codes, self.codes_valides, list(guess))
         max_remaining = calcul_max_guess_remaining(1, knuthTree)
         return max_remaining, len(self.codes_valides)
 
