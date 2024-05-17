@@ -4,7 +4,7 @@ from flask_cors import CORS
 from game import colors_to_index_string, colors_to_string, generate_code, generate_feedback
 from hint import generate_hints
 from game import keep_possible
-from player import play
+from player import player_Mastermind
 from ai_easy import play_level_easy
 from ai_normal import play_level_normal
 from ai_expert import play_level_expert
@@ -39,17 +39,28 @@ def guess():
         data = request.json
         answer = data['answer']
         guess = data['guess']
+        guesses = data['guesses']
+        feedbacks = data['feedbacks']
         black, white = generate_feedback(guess, answer)
-        #######################################
-        # je te laisse le code pour la partie #
-        # où on calcul le nombre de coup max  #
-        #######################################
-        # max_remaining = play(guess, (black, white))
-        feedback = {"colors": ['black'] * black + ['white']
-                    * white, "won": True if black == 4 else False}
-        # feedback = {"colors": ['black'] * black + ['white'] * white,
-        #             "won": True if black == 4 else False,
-        #             "max_remaining": max_remaining}
+        feedbacks.append(['black'] * black + ['white'] * white)
+
+        evals = []
+
+        for fb in feedbacks:
+            evals.append((fb.count('black'), fb.count('white')))
+
+        play = player_Mastermind()
+
+        max_remaining = play.get_stats(
+            guesses, evals, len(guesses)) if len(guesses) == 0 else 5
+
+        print(len(guesses), len(evals), max_remaining)
+
+        # feedback = {"colors": ['black'] * black + ['white']
+        #             * white, "won": True if black == 4 else False}
+        feedback = {"colors": ['black'] * black + ['white'] * white,
+                    "won": True if black == 4 else False,
+                    "max_remaining": max_remaining}
         print("@post /guess", data)
         print("return: ", feedback)
         return jsonify(feedback)
