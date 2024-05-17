@@ -1,24 +1,30 @@
 import numpy as np
 import itertools
+import copy
 
 next_codes = None
+
+ALL_CODES = list(itertools.product('123456', repeat=4))
+
 
 class player_Mastermind():
 
     def __init__(self):
-        self.codes = list(itertools.product('123456', repeat=4))
-        self.codes_valides = list(itertools.product('123456', repeat=4))
-        self.alpha = {(0, 4) : 0, (0, 3) : 1, (0, 2) : 2, (0, 1) : 3, (0, 0) : 4,
-                      (1, 3) : 5, (1, 2) : 6, (1, 1) : 7, (1, 0) : 8,
-                      (2, 2) : 9, (2, 1) : 10, (2, 0) : 11,
-                      (3, 1) : 12, (3, 0) : 13,
-                      (4, 0) : 14}
+        self.codes = copy.deepcopy(ALL_CODES)
+        self.codes_valides = copy.deepcopy(ALL_CODES)
+        self.alpha = {(0, 4): 0, (0, 3): 1, (0, 2): 2, (0, 1): 3, (0, 0): 4,
+                      (1, 3): 5, (1, 2): 6, (1, 1): 7, (1, 0): 8,
+                      (2, 2): 9, (2, 1): 10, (2, 0): 11,
+                      (3, 1): 12, (3, 0): 13,
+                      (4, 0): 14}
         self.next_codes = [['2', '2', '1', '1'], ['1', '2', '1', '3'], ['2', '3', '4', '4'], ['2', '3', '5', '5'], ['3', '3', '4', '6'],
-                            None, ['1', '2', '1', '4'], ['1', '1', '3', '4'], ['1', '3', '5', '5'], 
-                            ['1', '2', '1', '3'], ['1', '2', '2', '4'], ['1', '2', '3', '4'],
-                            None, ['1', '2', '2', '3'],
-                            ['1', '1', '2', '2']]
-        
+                           None, ['1', '2', '1', '4'], [
+                               '1', '1', '3', '4'], ['1', '3', '5', '5'],
+                           ['1', '2', '1', '3'], ['1', '2', '2', '4'], [
+                               '1', '2', '3', '4'],
+                           None, ['1', '2', '2', '3'],
+                           ['1', '1', '2', '2']]
+
     def get_stats(self, guesses, evals):
         for guess, eval in zip(guesses, evals):
             _, list_candidates = calcul_candidate(self.codes_valides, guess)
@@ -26,14 +32,15 @@ class player_Mastermind():
         if len(guesses) == 1:
             next_guess = self.next_codes[self.alpha[evals[-1]]]
         else:
-            if next_codes[self.alpha[evals[-1]]] is None: 
+            if next_codes[self.alpha[evals[-1]]] is None:
                 return 1
             next_guess = next_codes[self.alpha[evals[-1]]][:4]
-        _, _, _, knuthTree = knuth_all(self.codes, self.codes_valides, next_guess)
+        _, _, _, knuthTree = knuth_all(
+            self.codes, self.codes_valides, next_guess)
         self.set_next_codes(knuthTree)
         max_remaining = calcul_max_guess_remaining(0, knuthTree)
-        return max_remaining #, len(self.codes_valides)
-    
+        return max_remaining  # , len(self.codes_valides)
+
     def set_next_codes(self, knuthTree):
         global next_codes
         next_codes = []
@@ -46,6 +53,7 @@ class player_Mastermind():
                 else:
                     next_codes.append(None)
         return
+
 
 def knuth_all(codes, candidates, guess):
     nb_candidates, list_candidates = calcul_candidate(candidates, guess)
@@ -60,7 +68,8 @@ def knuth_all(codes, candidates, guess):
             valid = False
             # pour chque code possible
             for code in codes:
-                new_nb_candidates, _ = calcul_candidate(list_candidates[i], list(code))
+                new_nb_candidates, _ = calcul_candidate(
+                    list_candidates[i], list(code))
                 if new_nb_candidates == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]:
                     knuthTree[i] = (len(list_candidates[i]), list(code))
                 # si le plus grand nombre de candidat possible est plus petit que le meilleur stoqué
@@ -83,8 +92,9 @@ def knuth_all(codes, candidates, guess):
         # sinon c'est fini pour cette branche
         else:
             knuthTree[i] = (len(list_candidates[i]), list_candidates[i])
-            
+
     return (sum(nb_candidates), candidates, guess, knuthTree)
+
 
 def calcul_candidate(p, guess):
     candidate = [0]*15
@@ -199,7 +209,7 @@ def calcul_candidate(p, guess):
     allp.append(p12)
     allp.append(p11)
     allp.append(p10)
-    
+
     allp.append(p22)
     allp.append(p21)
     allp.append(p20)
@@ -211,6 +221,7 @@ def calcul_candidate(p, guess):
 
     return candidate, allp
 
+
 def calcul_max_guess_remaining(h, knuthTree):
     maxh = 0
     for alpha in knuthTree:
@@ -218,7 +229,5 @@ def calcul_max_guess_remaining(h, knuthTree):
             maxh = max(maxh, h+alpha[0])
         else:
             maxh = max(maxh, calcul_max_guess_remaining(h+1, alpha[3]))
-            
+
     return maxh
-
-
