@@ -19,12 +19,12 @@ def play_level_normal(answer):
     while True:
         guess = play_turn(game, possible_answers)
         # mutation
-        for i in range(4):
-            if random.random() <= 0.17:
-                change_value = random.randint(1, 6)
-                guess = list(guess)
-                guess[i] = str(change_value)
-                guess = tuple(guess)
+        if random.random() <= 0.3:
+            change_index = random.randint(0, 3)
+            change_value = random.randint(1, 6)
+            guess = list(guess)
+            guess[change_index] = str(change_value)
+            guess = tuple(guess)
         score = generate_feedback(guess, answer)
         game.append({'guess': guess, 'score': score})
         if score == (4, 0):
