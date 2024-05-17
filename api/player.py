@@ -1,6 +1,8 @@
 import numpy as np
 import itertools
 
+next_codes = None
+
 class player_Mastermind():
 
     def __init__(self):
@@ -11,15 +13,39 @@ class player_Mastermind():
                       (2, 2) : 9, (2, 1) : 10, (2, 0) : 11,
                       (3, 1) : 12, (3, 0) : 13,
                       (4, 0) : 14}
+        self.next_codes = [['2', '2', '1', '1'], ['1', '2', '1', '3'], ['2', '3', '4', '4'], ['2', '3', '5', '5'], ['3', '3', '4', '6'],
+                            None, ['1', '2', '1', '4'], ['1', '1', '3', '4'], ['1', '3', '5', '5'], 
+                            ['1', '2', '1', '3'], ['1', '2', '2', '4'], ['1', '2', '3', '4'],
+                            None, ['1', '2', '2', '3'],
+                            ['1', '1', '2', '2']]
         
-    def get_stats(self, guesses, evals, nb_coup):
-        for i in range(nb_coup):
-            guess, eval = guesses[i], evals[i]
+    def get_stats(self, guesses, evals):
+        for guess, eval in zip(guesses, evals):
             _, list_candidates = calcul_candidate(self.codes_valides, guess)
             self.codes_valides = list_candidates[self.alpha[eval]]
-        _, _, _, knuthTree = knuth_all(self.codes, self.codes_valides, list(guess))
-        max_remaining = calcul_max_guess_remaining(1, knuthTree)
+        if len(guesses) == 1:
+            next_guess = self.next_codes[self.alpha[evals[-1]]]
+        else:
+            if next_codes[self.alpha[evals[-1]]] is None: 
+                return 1
+            next_guess = next_codes[self.alpha[evals[-1]]][:4]
+        _, _, _, knuthTree = knuth_all(self.codes, self.codes_valides, next_guess)
+        self.set_next_codes(knuthTree)
+        max_remaining = calcul_max_guess_remaining(0, knuthTree)
         return max_remaining #, len(self.codes_valides)
+    
+    def set_next_codes(self, knuthTree):
+        global next_codes
+        next_codes = []
+        for alpha in knuthTree:
+            if len(alpha) == 4:
+                next_codes.append(alpha[2])
+            else:
+                if alpha[0] != 0:
+                    next_codes.append(list(alpha[1][0]))
+                else:
+                    next_codes.append(None)
+        return
 
 def knuth_all(codes, candidates, guess):
     nb_candidates, list_candidates = calcul_candidate(candidates, guess)

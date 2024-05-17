@@ -48,19 +48,20 @@ def guess():
 
         for fb in feedbacks:
             evals.append((fb.count('black'), fb.count('white')))
+        guesses = [tuple(colors_to_index_string(s)) for s in guesses]
 
         play = player_Mastermind()
 
         max_remaining = play.get_stats(
-            guesses, evals, len(guesses)) if len(guesses) == 0 else 5
+            guesses, evals) if len(guesses) != 0 else 5
 
-        print(len(guesses), len(evals), max_remaining)
+        #print(len(guesses), len(evals), max_remaining)
 
         # feedback = {"colors": ['black'] * black + ['white']
         #             * white, "won": True if black == 4 else False}
         feedback = {"colors": ['black'] * black + ['white'] * white,
                     "won": True if black == 4 else False,
-                    "max_remaining": max_remaining}
+                    "max_remaining": max_remaining if black != 4 else 0}
         print("@post /guess", data)
         print("return: ", feedback)
         return jsonify(feedback)
